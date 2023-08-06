@@ -43,12 +43,48 @@ struct AppData : Identifiable{
 
 struct CustomHstack : Layout{
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-        <#code#>
+        
+        let maxsize = computeMaxSize(subviews: subviews)
+      
+        let spacing =  computeSpacing(subviews: subviews)
+        
+        let totalSpacing = spacing.reduce(.zero) { $0 + $1}
+    
+        return CGSize( width: (maxsize.width * CGFloat(subviews.count)) + totalSpacing, height: maxsize.height )
     }
     
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-        <#code#>
+        let maxsize = computeMaxSize(subviews: subviews)
+      
+        let spacing =  computeSpacing(subviews: subviews)
+        
+        let sizeProposal = ProposedViewSize( width: maxsize.width, height: maxsize.height)
+        
+        var x  = bounds.minX + maxsize.width / 2
+        
+        for index in  subviews.indices {
+            subviews[index].place(at: CGPoint( x: x, y: bounds.midY), anchor: .leading,  proposal:  sizeProposal)
+            x += maxsize.width + spacing[index]
+        }
     }
+    
+    
+    func computeMaxSize(subviews : Subviews) -> CGSize{
+        let subviewSizes = subviews.map{ $0.sizeThatFits(.unspecified)}
+        
+        let maxsize = subviewSizes.reduce(.zero){
+            currentMax, subViewSize in CGSize(width: max(currentMax.width, subViewSize.width), height:  max(currentMax.height, subViewSize.height))
+        }
+        return maxsize
+    }
+    
+    func computeSpacing(subviews: Subviews) -> [CGFloat]{
+        let spacing = subviews.indices.map{
+            index in  return  subviews[index].spacing.distance(to:  subviews[index + 1].spacing, along: .horizontal)
+        }
+        return spacing
+    }
+    
     
     
 }
