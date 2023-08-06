@@ -10,6 +10,9 @@ import SwiftUI
 
 struct Dashboard : View {
     @State private var progess : Double = 0.0
+    @State private var showPopOver : Bool = false
+    @State private var name : String = "Qazeem Abiodun"
+    @Environment(\.sizeCategory) var cat
     var data = [AppData(label: "Cat"), AppData(label: "Dog"),  AppData(label: "House")]
     var body : some View {
         return HStack(alignment: .top){
@@ -17,11 +20,21 @@ struct Dashboard : View {
                 1...5,
                 id: \.self
                     ) { data  in
-                        Button {} label: {
+                        Button {
+                            showPopOver.toggle()
+                        } label: {
                             Text("Cat")
                         }
                     }
+        }.popover(isPresented: $showPopOver){ VStack(alignment: .leading){
+            VStack{
+                Text("Welcome ooo")
+                ChildView(name: $name)
+            }
+            
         }
+        }
+        
     }
 }
 
@@ -32,6 +45,38 @@ struct Dashboard_Previews: PreviewProvider {
     }
 }
 
+
+
+
+
+struct ChildView : View {
+    @Binding var name: String
+    
+    var body : some View  {
+        return VStack{
+            Text("My name is \(name)")
+            Button{
+              name = "Adelani adegoke"
+            } label : {
+                Text("Tap me ooo")
+            }
+        }
+    }
+}
+
+
+
+
+struct ItemsPerPageKey: EnvironmentKey {
+    static var defaultValue: Int = 10
+}
+
+extension EnvironmentValues {
+    var itemsPerPage: Int {
+        get { self[ItemsPerPageKey.self] }
+        set { self[ItemsPerPageKey.self] = newValue }
+    }
+}
 
 
 
