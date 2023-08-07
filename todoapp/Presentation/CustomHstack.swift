@@ -8,11 +8,11 @@
 import Foundation
 import SwiftUI
 
-struct Dashboard : View {
+struct CustomH : View {
     @State private var progess : Double = 0.0
     @State private var showPopOver : Bool = false
     @State private var name : String = "Qazeem Abiodun"
-    @Environment(\.sizeCategory) var cat
+    @Environment(\.colorScheme) var cat
     var data = [AppData(label: "Cat"), AppData(label: "Dog"),  AppData(label: "House")]
     var body : some View {
         return HStack(alignment: .top){
@@ -21,6 +21,7 @@ struct Dashboard : View {
                 id: \.self
                     ) { data  in
                         Button {
+                            print(cat)
                             showPopOver.toggle()
                         } label: {
                             Text("Cat")
@@ -32,7 +33,7 @@ struct Dashboard : View {
                 ChildView(name: $name)
             }
             
-        }
+        }.environment(\.colorScheme, .dark)
         }
         
     }
@@ -41,7 +42,7 @@ struct Dashboard : View {
 
 struct Dashboard_Previews: PreviewProvider {
     static var previews: some View {
-        Dashboard()
+        CustomH()
     }
 }
 
@@ -79,7 +80,7 @@ extension EnvironmentValues {
 }
 
 
-
+/// For app data
 struct AppData : Identifiable{
     var  label: String
     var id: String { label }
